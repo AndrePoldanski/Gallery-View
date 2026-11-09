@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery View V6</title>
+<style>
+body{margin:0;background:#000;color:#fff;font-family:Arial,sans-serif;overflow:hidden;cursor:default;}
+#toolbar{position:fixed;top:10px;left:10px;z-index:1000;background:rgba(0,0,0,.75);padding:10px;border-radius:8px;}
+#viewer{display:flex;justify-content:center;align-items:center;height:100vh;width:100vw;}
+img{max-width:92vw;max-height:92vh;border:none;cursor:pointer;}
+button,input{margin:4px;}
+.judge{cursor:none;}
+</style>
+</head>
+<body>
+<div id="toolbar">
+<input type="file" id="picker" accept="image/*" multiple>
+<button onclick="toggleBorder()">Border</button>
+<button onclick="toggleJudgeMode()">Judge Mode</button>
+<span id="count"></span>
+</div>
+<div id="viewer"><img id="photo"></div>
+<script>
+let images=[];let current=0;let border=false;let controlsVisible=false;let judgeMode=false;let scale=92;
+const photo=document.getElementById('photo');
+const count=document.getElementById('count');
+const toolbar=document.getElementById('toolbar');
+function updateSize(){photo.style.maxWidth=scale+'vw';photo.style.maxHeight=scale+'vh';}
+function showImage(){if(images.length){photo.src=images[current];count.textContent=(current+1)+' / '+images.length;}}
+function toggleBorder(){border=!border;photo.style.border=border?'1px solid white':'none';}
+function toggleJudgeMode(){judgeMode=!judgeMode;if(judgeMode){toolbar.style.display='none';document.body.classList.add('judge');}else{document.body.classList.remove('judge');}}
+function toggleControls(){controlsVisible=!controlsVisible;toolbar.style.display=controlsVisible?'block':'none';}
+document.getElementById('picker').addEventListener('change',e=>{images=[];for(const f of e.target.files){images.push(URL.createObjectURL(f));}current=0;showImage();toolbar.style.display='none';controlsVisible=false;});
+document.addEventListener('keydown',e=>{if(e.key==='h'||e.key==='H'){toggleControls();return;}if(e.key==='j'||e.key==='J'){toggleJudgeMode();return;}if(e.key==='b'||e.key==='B'){toggleBorder();return;}if(e.key==='1'){scale=75;updateSize();return;}if(e.key==='2'){scale=85;updateSize();return;}if(e.key==='3'){scale=92;updateSize();return;}if(e.key==='4'){scale=98;updateSize();return;}if(e.key==='+'||e.key==='='){scale=Math.min(98,scale+3);updateSize();return;}if(e.key==='-'||e.key==='_'){scale=Math.max(50,scale-3);updateSize();return;}if(!images.length)return;if(e.key==='ArrowRight'){current=(current+1)%images.length;showImage();}if(e.key==='ArrowLeft'){current=(current-1+images.length)%images.length;showImage();}});
+let startX=0;document.addEventListener('touchstart',e=>{startX=e.changedTouches[0].screenX;});document.addEventListener('touchend',e=>{if(!images.length)return;let endX=e.changedTouches[0].screenX;if(endX-startX>50){current=(current-1+images.length)%images.length;}else if(startX-endX>50){current=(current+1)%images.length;}showImage();});
+photo.addEventListener('click',()=>{if(judgeMode){toggleJudgeMode();}else{toggleControls();}});
+updateSize();
+</script>
+</body>
+</html>
