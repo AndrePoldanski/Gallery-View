@@ -50,3 +50,6 @@ Some RAW formats such as Nikon NEF files may display using embedded previews. TI
 Purpose
 
 Gallery View was created for photographers who simply want to enjoy their images without unnecessary clutter.
+V11 
+
+Added auto advance of photos with slide timer
